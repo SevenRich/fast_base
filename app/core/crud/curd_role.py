@@ -15,6 +15,7 @@ class CRUDRole(CRUDBase[RoleModel, RoleCreate, RoleUpdate]):
     def create(self, db: Session, *, obj_in: RoleCreate) -> RoleModel:
         db_obj = RoleModel(
             name=obj_in.name,
+            desc=obj_in.desc,
         )
         db.add(db_obj)
         db.commit()

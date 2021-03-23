@@ -28,10 +28,10 @@ router = APIRouter()
     response_model=List[response.User], 
     summary='用户列表'
 )
-def get_users(
+def index_users(
     commons: dict = Depends(common_parameters),
     db: Session = Depends(deps.get_db),
-    current_user: UserModel = Depends(deps.get_current_user)
+    current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     用户列表 - ID 降序
@@ -40,15 +40,16 @@ def get_users(
     
     return users
 
+
 @router.post(
     '/users', 
     summary='创建用户', 
     response_model=response.User
 )
-def create_users(
+def store_users(
     form_data: dict = Depends(response.UserCreate),
     db: Session = Depends(deps.get_db),
-    current_user: UserModel = Depends(deps.get_current_user)
+    current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     """
     创建用户
@@ -61,47 +62,51 @@ def create_users(
     if existing_user is not None:
         raise HTTPException(400, 'user is exist')
     
-    
+    # TODO: 分配角色
     return crud.user.create(db, obj_in=form_data)
+
 
 @router.get(
     '/users/{user_id}', 
     summary='用户详情', 
     response_model=response.User
 )
-def get_user(
+def show_users(
     user_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: UserModel = Depends(deps.get_current_user)
+    current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     return crud.user.get(db, id=user_id)
+
 
 @router.put(
     '/users/{user_id}', 
     summary='更新用户', 
     response_model=response.User
 )
-def create_users(
+def update_users(
     user_id: int,
     form_data: dict = Depends(request.UserUpdate),
     db: Session = Depends(deps.get_db),
-    current_user: UserModel = Depends(deps.get_current_user)
+    current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     existing_user = crud.user.get(db, id=user_id)
     if existing_user is None:
         raise HTTPException(400, 'Not Found!')
     
+    # TODO: 分配角色
     return crud.user.update(db, db_obj=existing_user, obj_in=form_data)
+
 
 @router.delete(
     '/users/{user_id}', 
     status_code=204, 
     summary='删除用户'
 )
-def create_users(
+def delete_users(
     user_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: UserModel = Depends(deps.get_current_user)
+    current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     existing_user = crud.user.get(db, id=user_id)
     if existing_user is not None:

@@ -16,15 +16,14 @@ roleidToIdentityid = Table('role_identity', Base.metadata,
     Column('identity_id', Integer, ForeignKey('identities.id')),
 )
 
-
 class Role(Base):
     __tablename__ = 'roles'
     
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(64), nullable=False)
-    desc = Column(String(64))
-    created_at = Column(DateTime(), default=datetime.now)
-    updated_at = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+    name = Column(String(64), nullable=False, comment='角色 name')
+    desc = Column(String(64), comment='角色描述')
+    created_at = Column(DateTime(), default=datetime.now, comment='创建时间')
+    updated_at = Column(DateTime(), default=datetime.now, onupdate=datetime.now, comment='更新时间')
  
     identity = relationship('Identity', secondary=roleidToIdentityid, backref='roles')
  

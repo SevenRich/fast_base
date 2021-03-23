@@ -21,6 +21,10 @@ class UserCreate(UserBase):
 # Properties to receive via API on update
 class UserUpdate(UserBase):
     password: Optional[str] = None
+    
+    
+class UserUpdateToken(UserBase):
+    access_token: Optional[str] = None
 
 
 class UserInDBBase(UserBase):
@@ -38,3 +42,4 @@ class User(UserInDBBase):
 # Additional properties stored in DB
 class UserInDB(UserInDBBase):
     password: str
+    access_token: str

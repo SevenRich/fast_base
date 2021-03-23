@@ -21,13 +21,14 @@ class User(Base):
     __tablename__ = 'users'
     
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(64), nullable=False, unique=True)
-    password = Column(String(120), nullable=False)
-    email = Column(String(120), nullable=False, unique=True)
-    is_active = Column(Boolean(), default=True)
-    is_superuser = Column(Boolean(), default=True)
-    created_at = Column(DateTime(), default=datetime.now)
-    updated_at = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+    username = Column(String(64), nullable=False, unique=True, comment='用户名')
+    password = Column(String(120), nullable=False, comment='密码')
+    email = Column(String(120), nullable=False, unique=True, comment='Email')
+    is_active = Column(Boolean(), default=True, comment='激活状态')
+    is_superuser = Column(Boolean(), default=True, comment='超级管理员')
+    access_token = Column(String(300), nullable=True, comment='access token')
+    created_at = Column(DateTime(), default=datetime.now, comment='创建时间')
+    updated_at = Column(DateTime(), default=datetime.now, onupdate=datetime.now, comment='更新时间')
  
     roles = relationship('Role', secondary=useridToRoleid, backref='users')
  

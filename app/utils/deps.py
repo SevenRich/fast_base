@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
+from hashids import Hashids
 
 from ..models import UserModel
 from ..utils import security
@@ -39,9 +40,13 @@ def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = crud.user.get(db, id=token_data.sub)
+    hashids = Hashids(salt=settings.OAUTH_SECRET_KEY, min_length=6)
+    user = crud.user.get(db, id=hashids.decode(token_data.sub))
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+    # access_token 与数据库保存的不一样
+    if user.access_token != security.create_md5_token(token):
+        raise HTTPException(status_code=401, detail="Access Token have expired")
     return user
 
 
@@ -56,10 +61,14 @@ def get_current_active_user(
 def get_current_active_superuser(
     current_user: UserModel = Depends(get_current_user),
 ) -> UserModel:
-    print(current_user)
-    
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
         )
     return current_user
+
+
+def get_identity_user(
+    current_user: UserModel = Depends(get_current_user),
+) -> UserModel:
+    pass
