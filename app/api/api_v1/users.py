@@ -12,7 +12,7 @@ from ...utils import deps, security, common
 from ...utils.common import (
     common_parameters
 )
-from ...models import UserModel
+from ...models import UserModel, RoleModel
 from ...core.schemes import response
 from ...core import crud
 from ...config import settings
@@ -94,8 +94,16 @@ def update_users(
     if existing_user is None:
         raise HTTPException(400, 'Not Found!')
     
-    # TODO: 分配角色
-    return crud.user.update(db, db_obj=existing_user, obj_in=form_data)
+    update_user = crud.user.update(db, db_obj=existing_user, obj_in=form_data)
+    # 分配角色
+    for role in current_user.roles:
+        current_user.roles.remove(role)
+        
+    new_roles = [db.query(RoleModel).filter_by(id=role_id).one() for role_id in {1, 2, 3}]
+    [current_user.roles.append(new_role) for new_role in new_roles]
+    db.commit()
+    
+    return update_user
 
 
 @router.delete(

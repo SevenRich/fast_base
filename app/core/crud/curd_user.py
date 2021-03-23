@@ -42,6 +42,8 @@ class CRUDUser(CRUDBase[UserModel, UserCreate, UserUpdate]):
             password = get_password_hash(update_data["password"])
             del update_data["password"]
             update_data["password"] = password
+        else:
+            del update_data["password"]
         return super().update(db, db_obj=db_obj, obj_in=update_data)
     
     def update_access_token(
