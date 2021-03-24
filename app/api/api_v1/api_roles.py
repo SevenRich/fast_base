@@ -1,9 +1,9 @@
 # _*_ coding:utf-8 _*_
 
 from datetime import timedelta
-from typing import Any, List
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -22,8 +22,8 @@ router = APIRouter()
 
 @router.get(
     '/roles', 
-    response_model=List[response.Role], 
-    summary='角色列表'
+    summary='角色列表', 
+    response_model=List[response.Role]
 )
 def index(
     commons: dict = Depends(common_parameters),
@@ -45,18 +45,21 @@ def index(
 )
 def store(
     form_data: dict = Depends(request.RoleCreate),
+    identity_ids: Optional[List[int]] = Query(..., ge=1),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
     """
-    创建角色标识
+    创建角色标识 - 并把权限标识写入关联表
     """
     existing_name = crud.role.get_by_name(db, name=form_data.name)
     if existing_name is not None:
         raise HTTPException(400, 'Role name is exist')
-    
-    # TODO: 分配权限
-    return crud.role.create(db, obj_in=form_data)
+    role_info = crud.role.create(db, obj_in=form_data)
+    # 分配权限
+    [role_info.identity.append(crud.identity.get(db, id=identity_id)) for identity_id in identity_ids]
+    db.commit()
+    return crud.role.get_by_name(db, name=form_data.name)
 
 
 @router.get(
@@ -80,15 +83,23 @@ def show(
 def update(
     role_id: int,
     form_data: dict = Depends(request.RoleUpdate),
+    identity_ids: Optional[List[int]] = Query(..., ge=1),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
+    """
+    更新角色信息，并删除旧权限，重新分配新权限
+    """
     existing_role = crud.role.get(db, id=role_id)
     if existing_role is None:
         raise HTTPException(400, 'Role Not Found!')
-    
-    # TODO: 分配权限
-    return crud.role.update(db, db_obj=existing_role, obj_in=form_data)
+    role_info = crud.role.update(db, db_obj=existing_role, obj_in=form_data)
+    # 清空旧权限
+    [role_info.identity.remove(role_identity) for role_identity in role_info.identity]
+    # 分配权限
+    [role_info.identity.append(crud.identity.get(db, id=identity_id)) for identity_id in identity_ids]
+    db.commit()
+    return crud.role.get(db, id=role_id)
 
 
 @router.delete(
@@ -101,6 +112,9 @@ def delete(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
+    """
+    删除角色
+    """
     existing_user = crud.role.get(db, id=role_id)
     if existing_user is not None:
         crud.role.remove(db, id=role_id)

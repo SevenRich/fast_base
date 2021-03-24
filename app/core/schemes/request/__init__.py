@@ -1,3 +1,6 @@
-from .user_request import UserUpdate
-from .identity_request import IdentityCreate, IdentityUpdate
-from .role_request import RoleCreate, RoleUpdate
+from .req_user import UserUpdate
+from .req_identity import IdentityCreate, IdentityUpdate
+from .req_role import RoleCreate, RoleUpdate
+
+# TODO: Test
+from .req_menu import MenuRequest, IdentityRequest

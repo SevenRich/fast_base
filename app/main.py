@@ -24,6 +24,7 @@ app = FastAPI(
     exception_handlers=exception.exception_handlers, # exception 404
     on_startup=[service.startup], # 启动执行
     on_shutdown=[service.shutdown], # 关闭执行
+    # docs_url=None # 关闭 Docs OpenApi 文档
 )
 
 # CORS

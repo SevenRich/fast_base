@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
 
-from .role_response import Role
+from .res_role import Role
 
 
 # Shared properties

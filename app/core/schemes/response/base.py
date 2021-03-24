@@ -1,6 +1,9 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 from pydantic import BaseModel
 
+
 class BaseResponse(BaseModel):
-    pass
+    code: Optional(int) = 200
+    message: Optional(str) = 'Success'
+    data: Optional(List[Any]) = []

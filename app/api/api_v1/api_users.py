@@ -4,7 +4,7 @@ from app.models import role
 from datetime import timedelta
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -73,7 +73,7 @@ def store_users(
     response_model=response.User
 )
 def show_users(
-    user_id: int,
+    user_id: int = Path(..., title="The ID of the User to get"),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -90,7 +90,6 @@ def show_users(
 )
 def update_users(
     user_id: int,
-    role_id: Optional[int] = None,
     form_data: dict = Depends(request.UserUpdate),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
@@ -104,6 +103,7 @@ def update_users(
         update_user.roles.remove(user_role)
     # 追加新角色
     update_user.roles.append(crud.role.get(db, id=role_id))
+    db.commit()
     return update_user
 
 
@@ -117,6 +117,9 @@ def delete_users(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
+    """
+    删除用户 - 逻辑删除，激活状态改为 False [当前直接删除]
+    """
     existing_user = crud.user.get(db, id=user_id)
     if existing_user is not None:
         crud.user.remove(db, id=user_id)
