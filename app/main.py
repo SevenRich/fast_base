@@ -12,6 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 # 路由
 from .api import api_url
+# startup shutdown
+from .utils import service, exception
 
 
 # 主应用
@@ -19,6 +21,9 @@ app = FastAPI(
     title=settings.DOC_TITLE,
     description=settings.DOC_DESCRIPTION,
     version=settings.DOC_VERSION,
+    exception_handlers=exception.exception_handlers, # exception 404
+    on_startup=[service.startup], # 启动执行
+    on_shutdown=[service.shutdown], # 关闭执行
 )
 
 # CORS

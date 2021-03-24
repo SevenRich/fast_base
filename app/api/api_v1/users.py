@@ -1,7 +1,8 @@
 # _*_ coding:utf-8 _*_
 
+from app.models import role
 from datetime import timedelta
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -19,16 +20,16 @@ from ...config import settings
 from ...core.schemes import request
 
 
-
 router = APIRouter()
 
 
 @router.get(
     '/users', 
-    response_model=List[response.User], 
-    summary='用户列表'
+    summary='用户列表', 
+    response_model=List[response.User]
 )
 def index_users(
+    # keyword: Optional[str] = None,
     commons: dict = Depends(common_parameters),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
@@ -37,7 +38,6 @@ def index_users(
     用户列表 - ID 降序
     """
     users = db.query(UserModel).order_by(desc('id'))[commons['skip'] : commons['skip'] + commons['limit']]
-    
     return users
 
 
@@ -57,13 +57,14 @@ def store_users(
     existing_username = crud.user.get_by_username(db, username=form_data.username)
     if existing_username is not None:
         raise HTTPException(400, 'username is exist')
-    
     existing_user = crud.user.get_by_email(db, email=form_data.email)
     if existing_user is not None:
         raise HTTPException(400, 'user is exist')
-    
-    # TODO: 分配角色
-    return crud.user.create(db, obj_in=form_data)
+    user_info = crud.user.create(db, obj_in=form_data)
+    # 分配角色
+    user_info.roles.append(crud.role.get(db, id=form_data.role_id))
+    db.commit()
+    return user_info
 
 
 @router.get(
@@ -76,7 +77,10 @@ def show_users(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
-    return crud.user.get(db, id=user_id)
+    user_info = crud.user.get(db, id=user_id)
+    if user_info is None:
+        raise HTTPException(400, 'Not Found!')
+    return user_info
 
 
 @router.put(
@@ -86,6 +90,7 @@ def show_users(
 )
 def update_users(
     user_id: int,
+    role_id: Optional[int] = None,
     form_data: dict = Depends(request.UserUpdate),
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
@@ -93,16 +98,12 @@ def update_users(
     existing_user = crud.user.get(db, id=user_id)
     if existing_user is None:
         raise HTTPException(400, 'Not Found!')
-    
     update_user = crud.user.update(db, db_obj=existing_user, obj_in=form_data)
-    # 分配角色
-    for role in current_user.roles:
-        current_user.roles.remove(role)
-        
-    new_roles = [db.query(RoleModel).filter_by(id=role_id).one() for role_id in {1, 2, 3}]
-    [current_user.roles.append(new_role) for new_role in new_roles]
-    db.commit()
-    
+    # 清空旧角色
+    for user_role in update_user.roles:
+        update_user.roles.remove(user_role)
+    # 追加新角色
+    update_user.roles.append(crud.role.get(db, id=role_id))
     return update_user
 
 
@@ -119,4 +120,3 @@ def delete_users(
     existing_user = crud.user.get(db, id=user_id)
     if existing_user is not None:
         crud.user.remove(db, id=user_id)
-    

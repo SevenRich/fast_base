@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
+
+from .role_response import Role
 
 
 # Shared properties
@@ -16,6 +18,8 @@ class UserCreate(UserBase):
     username: str
     email: EmailStr
     password: str
+    
+    role_id: Optional[int] = 4
 
 
 # Properties to receive via API on update
@@ -25,6 +29,9 @@ class UserUpdate(UserBase):
 
 class UserInDBBase(UserBase):
     id: Optional[int] = None
+    
+    # 关联角色
+    roles: List[Role] = []
 
     class Config:
         orm_mode = True
