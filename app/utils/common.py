@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
-from jose import jwt
+
+import jwt
 
 from ..config import settings
 

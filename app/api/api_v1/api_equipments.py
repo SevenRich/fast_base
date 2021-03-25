@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Any, List
 
 from fastapi import (
-    APIRouter, Body, Depends, HTTPException
+    APIRouter, Body, Depends, HTTPException, Response
 )
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -99,7 +99,8 @@ def update(
 
 @router.delete(
     '/equipments/{equipment_id}', 
-    status_code=204, 
+    status_code=204,
+    response_class=Response,
     summary='删除设备'
 )
 def delete(
@@ -110,4 +111,4 @@ def delete(
     existing_info = crud.equipment.get(db, id=equipment_id)
     if existing_info is not None:
         crud.equipment.remove(db, id=equipment_id)
-    
+    return 

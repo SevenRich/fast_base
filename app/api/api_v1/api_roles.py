@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Any, List, Optional
 
 from fastapi import (
-    APIRouter, Body, Depends, HTTPException, Query
+    APIRouter, Body, Depends, HTTPException, Query, Response
 )
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -110,6 +110,7 @@ def update(
 @router.delete(
     '/roles/{role_id}', 
     status_code=204, 
+    response_class=Response,
     summary='删除角色'
 )
 def delete(

@@ -4,7 +4,7 @@ from datetime import timedelta
 from typing import Any, List
 
 from fastapi import (
-    APIRouter, Body, Depends, HTTPException
+    APIRouter, Body, Depends, HTTPException, Response
 )
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -97,6 +97,7 @@ def update(
 @router.delete(
     '/identities/{identity_id}', 
     status_code=204, 
+    response_class=Response,
     summary='删除权限'
 )
 def delete(

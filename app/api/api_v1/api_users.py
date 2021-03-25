@@ -5,7 +5,7 @@ from datetime import timedelta
 from typing import Any, List, Optional
 
 from fastapi import (
-    APIRouter, Body, Depends, HTTPException, Path, Query
+    APIRouter, Body, Depends, HTTPException, Path, Query, Response
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -112,6 +112,7 @@ def update_users(
 @router.delete(
     '/users/{user_id}', 
     status_code=204, 
+    response_class=Response,
     summary='删除用户'
 )
 def delete_users(

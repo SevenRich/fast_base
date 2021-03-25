@@ -1,8 +1,8 @@
 from typing import Generator
 
+import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from hashids import Hashids

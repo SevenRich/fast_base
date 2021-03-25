@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Any, Union
 from hashlib import md5
 
-from jose import jwt
+import jwt
 from passlib.context import CryptContext
 from hashids import Hashids
 
