@@ -104,7 +104,7 @@ def update_users(
     for user_role in update_user.roles:
         update_user.roles.remove(user_role)
     # 追加新角色
-    update_user.roles.append(crud.role.get(db, id=role_id))
+    update_user.roles.append(crud.role.get(db, id=form_data.role_id))
     db.commit()
     return update_user
 
