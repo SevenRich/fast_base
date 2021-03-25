@@ -51,4 +51,4 @@ async def add_process_time_header(request: Request, call_next):
 
 
 # Route 清单
-app.include_router(api_url.api_v1_router)
+app.include_router(api_url.api_v1_router, prefix="/api/v1")

@@ -34,7 +34,7 @@ def get_current_user(
         payload = jwt.decode(
             token, settings.OAUTH_SECRET_KEY, algorithms=[settings.OAUTH_ALGORITHM]
         )
-        token_data = scheme.token.TokenPayload(**payload)
+        token_data = scheme.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

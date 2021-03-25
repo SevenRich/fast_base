@@ -3,7 +3,9 @@
 from datetime import timedelta
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from fastapi import (
+    APIRouter, Body, Depends, HTTPException, Query
+)
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -72,7 +74,10 @@ def show(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
-    return crud.role.get(db, id=role_id)
+    obj_info = crud.role.get(db, id=role_id)
+    if obj_info is None:
+        raise HTTPException(400, 'Not Found!')
+    return obj_info
 
 
 @router.put(

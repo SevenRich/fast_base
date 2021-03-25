@@ -3,8 +3,9 @@
 from datetime import timedelta
 from typing import Any, List
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import (
+    APIRouter, Body, Depends, HTTPException
+)
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -69,7 +70,10 @@ def show(
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
-    return crud.identity.get(db, id=identity_id)
+    obj_info = crud.identity.get(db, id=identity_id)
+    if obj_info is None:
+        raise HTTPException(400, 'Not Found!')
+    return obj_info
 
 
 @router.put(

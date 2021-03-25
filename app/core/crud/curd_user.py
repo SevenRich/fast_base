@@ -7,7 +7,7 @@ from ...utils.security import (
 )
 from .base import CRUDBase
 from ...models import UserModel
-from ..schemes.scheme.user import UserCreate, UserUpdate, UserUpdateToken
+from ..schemes.scheme import UserCreate, UserUpdate, UserUpdateToken
 
 
 class CRUDUser(CRUDBase[UserModel, UserCreate, UserUpdate]):

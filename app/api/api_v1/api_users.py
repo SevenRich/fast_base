@@ -4,7 +4,9 @@ from app.models import role
 from datetime import timedelta
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Path, Query
+from fastapi import (
+    APIRouter, Body, Depends, HTTPException, Path, Query
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import desc

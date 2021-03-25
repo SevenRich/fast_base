@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ...utils.security import get_password_hash, verify_password
 from .base import CRUDBase
 from ...models import RoleModel
-from ..schemes.scheme.role import RoleCreate, RoleUpdate
+from ..schemes.scheme import RoleCreate, RoleUpdate
 
 
 class CRUDRole(CRUDBase[RoleModel, RoleCreate, RoleUpdate]):

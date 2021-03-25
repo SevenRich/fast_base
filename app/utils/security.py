@@ -37,3 +37,8 @@ def get_password_hash(password: str) -> str:
 
 def create_md5_token(access_token: str) -> str:
     return md5(access_token.encode('utf8')).hexdigest()
+
+
+def create_equipment_key(name: str) -> str:
+    import uuid
+    return uuid.uuid3(uuid.NAMESPACE_DNS, name)
