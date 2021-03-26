@@ -3,12 +3,22 @@
 # __author__ = '__Chris__'
 
 # 系统组件
+import os
 
 # 第三方组件
 from typing import List
 from pydantic import BaseSettings, EmailStr, AnyHttpUrl
 
 class Settings(BaseSettings):
+    # 项目根路径
+    BASE_PATH: str = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
+    
+    PROJECT_NAME: str = 'Code Generation System!'
+    DESCRIPTION: str = ''
+    
+    # 调试模式
+    DEBUG: bool = True
+    
     # 文档配置
     DOC_TITLE: str = "Code Generation System!"
     DOC_DESCRIPTION: str = "Code Generation System V1.0.0!"
@@ -24,7 +34,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "(-ASp+_)-Ulhw0848hnvVG-iqKyJSD&*&^-H3C9mqEqSl8KN-YRzRE"
 
     # 跨域设置 验证 list包含任意http url
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = ['http://localhost']
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
+        "http://localhost",
+        "http://localhost:8080",
+    ]
     
     # 验证邮箱地址格式
     FIRST_MALL: EmailStr = "sevenrich@163.com"
