@@ -14,15 +14,11 @@ class Settings(BaseSettings):
     BASE_PATH: str = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
     
     PROJECT_NAME: str = 'Code Generation System!'
-    DESCRIPTION: str = ''
+    DESCRIPTION: str = 'Code Generation System V1.0.0!'
+    VERSION: str = '1.0.0'
     
     # 调试模式
     DEBUG: bool = True
-    
-    # 文档配置
-    DOC_TITLE: str = "Code Generation System!"
-    DOC_DESCRIPTION: str = "Code Generation System V1.0.0!"
-    DOC_VERSION: str = "V1.0.0"
     
     # 项目
     PROJECT_NAME: str = "Code Generation System!"
@@ -69,6 +65,15 @@ class Settings(BaseSettings):
     
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
     EMAIL_TEMPLATES_DIR: str = "app/email-templates/build"
+    
+    # code
+    CODE_PREFIX: str = 'code'
+    
+    # cache 
+    REDIS_HOST: str = '192.168.0.200'
+    REDIS_PORT: int = 6379
+    REDIS_PASSWORD: str = 'QS178VWiod'
+    REDIS_DB: int = 2
     
 
 # 实例化配置对象

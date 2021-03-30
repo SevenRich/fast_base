@@ -32,3 +32,8 @@ async def common_parameters(page: int = 0, limit: int = 10):
     else:
         skip = limit * (page - 1)
     return {"skip": skip, "limit": limit}
+
+
+def create_order_sn() -> Optional[str]:
+    import time
+    return str(time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))) + str(time.time()).replace('.', '')[-7:]

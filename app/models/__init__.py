@@ -5,3 +5,4 @@ from .identity import Identity as IdentityModel
 from .menu import Menu as MenuModel
 from .company import Company as CompanyModel
 from .equipment import Equipment as EquipmentModel
+from .order import CodeOrder as CodeOrderModel, CodeStatusEnum, CodeRelevanceEnum, CodeTypeEnum

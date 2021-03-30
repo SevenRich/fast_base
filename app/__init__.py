@@ -7,7 +7,6 @@ import traceback
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError, ValidationError
-# from aioredis import create_redis_pool
 
 
 from .config import settings
@@ -25,6 +24,7 @@ def create_app():
     app = FastAPI(
         title=settings.PROJECT_NAME,
         description=settings.DESCRIPTION,
+        version=settings.VERSION,
         docs_url=f"{settings.API_V1_STR}/docs",
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
         on_startup=[service.startup],
@@ -45,26 +45,12 @@ def create_app():
     # 请求拦截
     register_middleware(app)
 
-    # 挂载redis
-    # register_redis(app)
-
     if settings.DEBUG:
         # 注册静态文件
         # register_static_file(app)
         pass
 
     return app
-
-
-def register_static_file(app: FastAPI) -> None:
-    """
-    静态文件交互 生产使用 nginx
-    这里是开发是方便本地
-    :param app:
-    :return:
-    """
-    from fastapi.staticfiles import StaticFiles
-    app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 
 def register_router(app: FastAPI):
@@ -197,7 +183,7 @@ def register_middleware(app: FastAPI):
     @app.middleware("http")
     async def logger_request(request: Request, call_next):
         # https://stackoverflow.com/questions/60098005/fastapi-starlette-get-client-real-ip
-        logger.info(f"访问记录:{request.method} url:{request.url} IP:{request.client.host} headers:{request.headers}")
+        # logger.info(f"访问记录:{request.method} url:{request.url} IP:{request.client.host} headers:{request.headers}")
 
         response = await call_next(request)
 
@@ -213,28 +199,4 @@ def register_middleware(app: FastAPI):
         process_time = time.time() - start_time
         response.headers["X-Process-Time"] = str(process_time)
         return response
-
-
-# def register_redis(app: FastAPI) -> None:
-#     """
-#     把redis挂载到app对象上面
-#     :param app:
-#     :return:
-#     """
-
-#     @app.on_event('startup')
-#     async def startup_event():
-#         """
-#         获取链接
-#         :return:
-#         """
-#         app.state.redis = await create_redis_pool(settings.REDIS_URL)
-
-#     @app.on_event('shutdown')
-#     async def shutdown_event():
-#         """
-#         关闭
-#         :return:
-#         """
-#         app.state.redis.close()
-#         await app.state.redis.wait_closed()
+    

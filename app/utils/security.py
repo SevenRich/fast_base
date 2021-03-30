@@ -42,3 +42,7 @@ def create_md5_token(access_token: str) -> str:
 def create_equipment_key(name: str) -> str:
     import uuid
     return uuid.uuid3(uuid.NAMESPACE_DNS, name)
+
+
+def create_md5_string(key: str) -> str:
+    return md5(key.encode('utf8')).hexdigest()
