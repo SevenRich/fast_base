@@ -14,7 +14,7 @@ from ..schemes.response import OrderCreate, OrderUpdate
 
 class CRUDCodeOrder(CRUDBase[CodeOrderModel, OrderCreate, OrderUpdate]):
     def get_by_code(self, db: Session, *, code: str) -> Optional[CodeOrderModel]:
-        return db.query(CodeOrderModel).filter(CodeOrderModel.equipment_code == code).first()
+        return db.query(CodeOrderModel).filter(CodeOrderModel.code_sn == code).first()
     
     def get_by_name(self, db: Session, *, name: str) -> Optional[CodeOrderModel]:
         return db.query(CodeOrderModel).filter(CodeOrderModel.equipment_name == name).first()
@@ -39,6 +39,7 @@ class CRUDCodeOrder(CRUDBase[CodeOrderModel, OrderCreate, OrderUpdate]):
             relevance_type=obj_in.relevance_type,  # 关联 before 1 前关联 after 2 后关联
             code_type=obj_in.code_type,  # 码类型 standard 1 标准码 group 2 套标
             batch_sn=start_num, # 码批次
+            counts=obj_in.counts, # 码量
             status=0,
             url_prefix=obj_in.url_prefix, # Url 前缀
             export_key=create_md5_string(obj_in.export_key), # 导码密钥 忘记密码所有码不可找回

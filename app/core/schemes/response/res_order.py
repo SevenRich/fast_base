@@ -53,7 +53,9 @@ class OrderCreate(OrderBase):
 
 # Properties to receive via API on update
 class OrderUpdate(OrderBase):
-    code_config: Text
+    status: Optional[int] = 3
+    code_config: Optional[CodeConfig]
+    export_config: Optional[ExportConfig]
 
 
 class OrderInDBBase(OrderBase):

@@ -74,16 +74,18 @@ def store(
 @router.get(
     '/orders/{order_id}', 
     summary='生码订单详情', 
-    response_model=response.Equipment
+    # response_model=response.Equipment
 )
 def show(
     order_id: int,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(deps.get_db),
     current_user: UserModel = Depends(deps.get_current_active_user)
 ) -> Any:
-    obj_info = crud.equipment.get(db, id=order_id)
+    obj_info = crud.order.get(db, id=order_id)
     if obj_info is None:
         raise HTTPException(400, 'Not Found!')
+    background_tasks.add_task(code.generator_standard_code, db, obj_info)
     return obj_info
 
 

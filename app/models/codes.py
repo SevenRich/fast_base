@@ -9,7 +9,7 @@ def get_model(suffix):
     class CodeModel(Base):
         __tablename__ = '{code_prefix}_{suffix}'.format(code_prefix=settings.CODE_PREFIX, suffix=suffix)
         
-        __table_args__ = {'extend_existing': True}
+        __table_args__ = {'extend_existing': True, 'autoload': True}
         
         id = Column(BigInteger, primary_key=True, autoincrement=True)
         code_sn = Column(String(64), comment='生码单号')
